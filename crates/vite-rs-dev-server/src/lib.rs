@@ -106,7 +106,7 @@ pub fn start_dev_server(
     // println!("Starting dev server!");
     // start ViteJS dev server
     let child = Arc::new(Mutex::new(
-        std::process::Command::new("npx")
+        std::process::Command::new("npx.cmd")
             .arg("vite")
             .arg("--host")
             .arg(host)

@@ -45,7 +45,7 @@ pub mod build {
             p.to_str().unwrap().to_string()
         };
 
-        let vite_build = std::process::Command::new("npx")
+        let vite_build = std::process::Command::new("npx.cmd")
             .arg("vite")
             .arg("build")
             .arg("--manifest") // force manifest generation to `.vite/manifest.json`

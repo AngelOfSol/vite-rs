@@ -68,7 +68,7 @@ fn test_dev_server_port() {
             assert!(assert_dev_server_running_on_port(21232).is_err());
 
             use command_group::CommandGroup; // npx spawns a group process, so we use this in order to kill it later.
-            let mut cmd = std::process::Command::new("npx")
+            let mut cmd = std::process::Command::new("npx.cmd")
                 .arg("vite")
                 .arg("--port")
                 .arg("21232")
