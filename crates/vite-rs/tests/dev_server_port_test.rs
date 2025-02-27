@@ -68,17 +68,33 @@ fn test_dev_server_port() {
             assert!(assert_dev_server_running_on_port(21232).is_err());
 
             use command_group::CommandGroup; // npx spawns a group process, so we use this in order to kill it later.
-            let mut cmd = std::process::Command::new("npx.cmd")
-                .arg("vite")
-                .arg("--port")
-                .arg("21232")
-                .arg("--strictPort")
-                .arg("--clearScreen")
-                .arg("false")
-                .stdin(std::process::Stdio::null())
-                .current_dir("./test_projects/custom_dev_server_port_test")
-                .group_spawn() // npx spawns a group process, so we use a group_spawn in order to kill it later.
-                .expect("Failed to start dev server");
+            let mut cmd = if cfg!(target_os = "windows") {
+                std::process::Command::new("cmd")
+                    .arg("/C")
+                    .arg("npx.cmd")
+                    .arg("vite")
+                    .arg("--port")
+                    .arg("21232")
+                    .arg("--strictPort")
+                    .arg("--clearScreen")
+                    .arg("false")
+                    .stdin(std::process::Stdio::null())
+                    .current_dir("./test_projects/custom_dev_server_port_test")
+                    .group_spawn() // npx spawns a group process, so we use a group_spawn in order to kill it later.
+                    .expect("Failed to start dev server")
+            } else {
+                std::process::Command::new("npx.cmd")
+                    .arg("vite")
+                    .arg("--port")
+                    .arg("21232")
+                    .arg("--strictPort")
+                    .arg("--clearScreen")
+                    .arg("false")
+                    .stdin(std::process::Stdio::null())
+                    .current_dir("./test_projects/custom_dev_server_port_test")
+                    .group_spawn() // npx spawns a group process, so we use a group_spawn in order to kill it later.
+                    .expect("Failed to start dev server")
+            };
 
             let mut close_dev_server = || {
                 cmd.kill()

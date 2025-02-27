@@ -45,18 +45,35 @@ pub mod build {
             p.to_str().unwrap().to_string()
         };
 
-        let vite_build = std::process::Command::new("npx.cmd")
-            .arg("vite")
-            .arg("build")
-            .arg("--manifest") // force manifest generation to `.vite/manifest.json`
-            .arg("--outDir")
-            .arg(&absolute_output_path)
-            .current_dir(absolute_root_dir)
-            .spawn()
-            .expect("failed to build")
-            .wait()
-            .expect("failed to wait for build to complete")
-            .success();
+        let vite_build = if cfg!(target_os = "windows") {
+            std::process::Command::new("cmd")
+                .arg("/C")
+                .arg("npx.cmd")
+                .arg("vite")
+                .arg("build")
+                .arg("--manifest") // force manifest generation to `.vite/manifest.json`
+                .arg("--outDir")
+                .arg(&absolute_output_path)
+                .current_dir(dbg!(std::fs::canonicalize(absolute_root_dir).unwrap()))
+                .spawn()
+                .expect("failed to build")
+                .wait()
+                .expect("failed to wait for build to complete")
+                .success()
+        } else {
+            std::process::Command::new("npx.cmd")
+                .arg("vite")
+                .arg("build")
+                .arg("--manifest") // force manifest generation to `.vite/manifest.json`
+                .arg("--outDir")
+                .arg(&absolute_output_path)
+                .current_dir(absolute_root_dir)
+                .spawn()
+                .expect("failed to build")
+                .wait()
+                .expect("failed to wait for build to complete")
+                .success()
+        };
 
         if !vite_build {
             return Err(syn::Error::new(
