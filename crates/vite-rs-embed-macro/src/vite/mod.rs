@@ -54,7 +54,7 @@ pub mod build {
                 .arg("--manifest") // force manifest generation to `.vite/manifest.json`
                 .arg("--outDir")
                 .arg(&absolute_output_path)
-                .current_dir(dbg!(std::fs::canonicalize(absolute_root_dir).unwrap()))
+                .current_dir(&absolute_root_dir[4..])
                 .spawn()
                 .expect("failed to build")
                 .wait()

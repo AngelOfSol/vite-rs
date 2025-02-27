@@ -19,6 +19,7 @@ use syn::{parse_macro_input, DeriveInput};
 /// This is used to resolve relative paths for the input and output directories.
 fn derive_absolute_root_dir(ast: &syn::DeriveInput) -> syn::Result<String> {
     let mut root_attrs = syn_utils::find_attribute_values(ast, "root");
+
     if root_attrs.len() > 1 {
         return Err(syn::Error::new_spanned(ast, "When specifying a custom root directory, #[derive(vite_rs::Embed)] must only contain a single #[root = \"./\"] attribute."));
     }
@@ -37,10 +38,12 @@ fn derive_absolute_root_dir(ast: &syn::DeriveInput) -> syn::Result<String> {
     } else {
         root_dir
     };
+
     let root_dir = root_dir.canonicalize().expect(&format!(
         "Could not canonicalize root directory path. Does it exist? (path: {:?})",
         root_dir
     ));
+
     let root_dir_str = root_dir.to_str().unwrap();
 
     Ok(root_dir_str.to_string())
